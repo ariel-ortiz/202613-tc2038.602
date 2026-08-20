@@ -3,7 +3,7 @@ from typing import cast
 from rgb_types import RGBStream
 
 
-THRESHOLD = 130
+THRESHOLD: int = 130
 
 
 def binarify(input_path: str, output_path: str) -> None:

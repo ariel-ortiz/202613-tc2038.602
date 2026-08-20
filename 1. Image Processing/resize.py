@@ -3,7 +3,7 @@ from typing import cast
 from rgb_types import RGBMatrix
 
 
-SCALE = 10
+SCALE: int = 10
 
 
 def shrink(input_path: str, output_path: str) -> None:
