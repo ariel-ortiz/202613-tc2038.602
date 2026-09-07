@@ -59,17 +59,55 @@ class OrderedSet[T]:
                 return True
         return False
 
+    # Complexity: O(N)
+    def discard(self, value: T) -> None:
+        current: OrderedSet.Node[T] = self.__sentinel.next
+        while current is not self.__sentinel:
+            if current.info == value:
+                current.prev.next = current.next
+                current.next.prev = current.prev
+                self.__count -= 1
+                return
+            current = current.next
+
+    # Complexity: O(N*M) where N = len(self) and M = len(other)
+    def __eq__(self, other: object) -> bool:
+        if self is other:
+            return True
+        if not isinstance(other, OrderedSet):
+            return False
+        if len(self) != len(cast(OrderedSet[T], other)):
+            return False
+        for elem in self:
+            if elem not in other:
+                return False
+        return True
+
+    # Complexity: O(N*M) where N = len(self) and M = len(other)
+    def __le__(self, other: OrderedSet[T]) -> bool:
+        if self is other:
+            return True
+        if len(self) > len(other):
+            return False
+        for elem in self:
+            if elem not in other:
+                return False
+        return True
+
+    # Complexity: O(N*M) where N = len(self) and M = len(other)
+    def __and__(self, other: OrderedSet[T]) -> OrderedSet[T]:
+        result: OrderedSet[T] = OrderedSet()
+        for elem in self:
+            if elem in other:
+                result.add(elem)
+        return result
+
 
 if __name__ == '__main__':
     a: OrderedSet[int] = OrderedSet([4, 8, 15, 16, 23])
-    print(a)
-    print(len(a))
-    print(a)
-    it: Iterator[int] = iter(a)
-    print(next(it))
-    print(next(it))
-    print()
-    for i in a:
-        print(i)
-    b: OrderedSet[str] = OrderedSet('hello')
-    print(b)
+    b: OrderedSet[int] = OrderedSet([23, 16, 8, 4, 15])
+    print(a == b)
+    print(a == 42)
+    print(a == a)
+    a.discard(23)
+    print(a == b)
