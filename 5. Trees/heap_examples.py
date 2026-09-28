@@ -3,6 +3,7 @@
 from heapq import heappush, heappop # for min-heap
 from heapq import heappush_max, heappop_max # for max-heap (new in Python 3.14)
 
+
 def heap_sort(data):
 
     # Create the heap
@@ -17,6 +18,7 @@ def heap_sort(data):
 
     return result
 
+
 def heap_sort_reverse(data):
 
     # Create the heap
@@ -30,7 +32,7 @@ def heap_sort_reverse(data):
         result.append(heappop_max(heap))
 
     return result
-    
+
 
 if __name__ == '__main__':
     # heap = []
@@ -41,7 +43,7 @@ if __name__ == '__main__':
     # heappush(heap, 10)
     # print(heap)
     # heappush(heap, 2)
-    # print(heap)    
+    # print(heap)
     # heappush(heap, 3)
     # print(heap)
     # print(heappop(heap))
