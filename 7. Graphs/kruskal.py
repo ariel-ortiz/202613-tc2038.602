@@ -30,7 +30,60 @@ def sort_edges(graph: WeightedGraph) -> deque[Edge]:
     return deque(sorted(list(result)))
 
 
+def add_edge(graph: WeightedGraph, edge: Edge) -> None:
+    weight, u, v = edge
+    graph[u].add((v, weight))
+    graph[v].add((u, weight))
+
+
+def remove_edge(graph: WeightedGraph, edge: Edge) -> None:
+    weight, u, v = edge
+    graph[u].remove((v, weight))
+    graph[v].remove((u, weight))
+
+
+def has_cycle(
+        initial: str,
+        graph: WeightedGraph,
+        visited: set[str] | None = None,
+        parent: str | None = None) -> bool:
+    if visited is None:
+        visited = set()
+    visited.add(initial)
+    for v, _ in graph[initial]:
+        if v in visited:
+            if v != parent:
+                return True
+        elif has_cycle(v, graph, visited, initial):
+            return True
+    return False
+
+
+def kruskal_mst(graph: WeightedGraph) -> tuple[int, WeightedGraph]:
+    queue: deque[Edge] = sort_edges(graph)
+    result: WeightedGraph = {v: set() for v in graph}
+    total: int = 0
+    visited: set[str] = set()
+    remaining_edges: int = len(graph) - 1
+    while remaining_edges:
+        edge: Edge = queue.popleft()
+        add_edge(result, edge)
+        if (edge.u in visited
+                and edge.v in visited
+                and has_cycle(edge.u, result)):
+            remove_edge(result, edge)
+        else:
+            visited.add(edge.u)
+            visited.add(edge.v)
+            total += edge.weight
+            remaining_edges -= 1
+    return (total, result)
+
+
 if __name__ == '__main__':
+
+    from pprint import pprint
+
     g1: WeightedGraph = {
         'A': {('B', 2), ('C', 6), ('D', 5)},
         'B': {('A', 2), ('C', 8), ('D', 11)},
@@ -38,13 +91,13 @@ if __name__ == '__main__':
         'D': {('A', 5), ('B', 11), ('C', 1)}
     }
     g2: WeightedGraph = {
-        'A': {('B', 1), ('D', 12), ('F', 6)},
+        'A': {('B', 1), ('D', 12), ('F', 10)},
         'B': {('A', 1), ('C', 15), ('D', 13), ('E', 9)},
-        'C': {('B', 15), ('E', 3), ('G', 7)},
+        'C': {('B', 15), ('E', 3), ('G', 2)},
         'D': {('A', 12), ('B', 13), ('F', 14), ('G', 2)},
-        'E': {('B', 9), ('C', 3), ('F', 10), ('G', 8)},
-        'F': {('A', 6), ('D', 14), ('E', 10), ('G', 11), ('H', 4)},
-        'G': {('C', 7), ('D', 2), ('E', 8), ('F', 11), ('H', 5)},
+        'E': {('B', 9), ('C', 3), ('F', 10), ('G', 1)},
+        'F': {('A', 10), ('D', 14), ('E', 10), ('G', 11), ('H', 4)},
+        'G': {('C', 2), ('D', 2), ('E', 1), ('F', 11), ('H', 5)},
         'H': {('F', 4), ('G', 5)}
     }
 
@@ -57,6 +110,20 @@ if __name__ == '__main__':
     # s.add(e1)
     # s.add(e2)
     # print(s)
-    from pprint import pprint
-    pprint(sort_edges(g1))
-    pprint(sort_edges(g2))
+    # # pprint(sort_edges(g1))
+    # # pprint(sort_edges(g2))
+    # g: WeightedGraph = {
+    #     'A': set(),
+    #     'B': set(),
+    #     'C': set()
+    # }
+    # e1: Edge = Edge(1, 'A', 'B')
+    # e2: Edge = Edge(2, 'B', 'C')
+    # e3: Edge = Edge(3, 'C', 'A')
+    # add_edge(g, e1)
+    # add_edge(g, e2)
+    # # add_edge(g, e3)
+    # pprint(g)
+    # print(has_cycle('C', g))
+    pprint(kruskal_mst(g2))
+
