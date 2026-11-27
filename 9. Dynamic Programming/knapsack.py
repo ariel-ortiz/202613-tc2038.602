@@ -10,7 +10,7 @@ class Item:
         return self.name[0]
 
 
-@dataclass
+@dataclass(frozen=True)
 class Entry:
     value: int
     items: set[Item]
@@ -28,7 +28,7 @@ def knapsack_table(size: int, items: list[Item]) -> Table:
     dp: Table = [[EMPTY_ENTRY for _ in range(size + 1)]
                  for _ in range(len(items))]
     for i, item in enumerate(items):
-        for j in range(size + 1):
+        for j in range(1, size + 1):
             dp[i][j] = optimal_entry(dp, item, i, j)
     return dp
 
@@ -54,13 +54,11 @@ if __name__ == '__main__':
     #                                Item('food', 2, 9),
     #                                Item('jacket', 2, 5),
     #                                Item('camera', 1, 6)])
-    dp: Table = knapsack_table(4, [
-                                   Item('jewlery', 1, 5_000),
-                                   Item('iphone', 1, 2_000),
+    dp: Table = knapsack_table(4, [Item('guitar', 1, 1_500),
                                    Item('laptop', 3, 2_000),
                                    Item('stereo', 4, 3_000),
-                                   Item('guitar', 1, 1_500),
-                                   ])
+                                   Item('iphone', 1, 2_000),
+                                   Item('jewlery', 1, 5_000)])
     pprint(dp)
     solution: Entry = dp[-1][-1]
     print(f'Total value = {solution.value}')
